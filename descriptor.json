@@ -1,0 +1,323 @@
+{
+  "command-line": "python run.py CYTOMINE_HOST CYTOMINE_PUBLIC_KEY CYTOMINE_PRIVATE_KEY CYTOMINE_ID_PROJECT CYTOMINE_ID_SOFTWARE CYTOMINE_ID_USERS CYTOMINE_ID_IMAGES CYTOMINE_ID_TERMS CYTOMINE_POSITIVE_TERMS CYTOMINE_REVIEWED CYTOMINE_ZOOM_LEVEL CYTOMINE_BINARY PYXIT_TARGET_WIDTH PYXIT_TARGET_HEIGHT N_JOBS PYXIT_TRANSPOSE PYXIT_N_SUBWINDOWS PYXIT_INTERPOLATION PYXIT_FIXED_SIZE PYXIT_COLORSPACE PYXIT_MIN_SIZE PYXIT_MAX_SIZE FOREST_N_ESTIMATORS FOREST_MIN_SAMPLES_SPLIT FOREST_MAX_FEATURES SVM_C SEED SVM",
+  "inputs": [
+    {
+      "name": "Cytomine host",
+      "description": "Cytomine server hostname",
+      "set-by-server": true,
+      "value-key": "@ID",
+      "optional": false,
+      "id": "cytomine_host",
+      "type": "String",
+      "command-line-flag": "--@id"
+    },
+    {
+      "name": "Cytomine public key",
+      "description": "Cytomine public key",
+      "set-by-server": true,
+      "value-key": "@ID",
+      "optional": false,
+      "id": "cytomine_public_key",
+      "type": "String",
+      "command-line-flag": "--@id"
+    },
+    {
+      "name": "Cytomine private key",
+      "description": "Cytomine private key",
+      "set-by-server": true,
+      "value-key": "@ID",
+      "optional": false,
+      "id": "cytomine_private_key",
+      "type": "String",
+      "command-line-flag": "--@id"
+    },
+    {
+      "name": "Cytomine project id",
+      "description": "Cytomine project id",
+      "set-by-server": true,
+      "value-key": "@ID",
+      "optional": false,
+      "id": "cytomine_id_project",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "name": "Cytomine software id",
+      "description": "Cytomine software id",
+      "set-by-server": true,
+      "value-key": "@ID",
+      "optional": false,
+      "id": "cytomine_id_software",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": "",
+      "name": "Cytomine users ids",
+      "description": "(Annotations filtering) Identifiers of users of which the annotations should be selected for training.",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "cytomine_id_users",
+      "type": "ListDomain",
+      "uri": "/api/project/$currentProject$/user.json",
+      "uri-print-attribute": "username",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": "",
+      "name": "Cytomine images ids",
+      "description": "(Annotations filtering) Identifiers of images of which the annotations should be selected for training.",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "cytomine_id_images",
+      "type": "ListDomain",
+      "uri": "/api/project/$currentProject$/imageinstance.json",
+      "uri-print-attribute": "instanceFilename",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": "",
+      "name": "Cytomine terms ids",
+      "description": "(Annotations filtering) Identifiers of terms of which the annotations should be selected for training.",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "cytomine_id_terms",
+      "type": "ListDomain",
+      "uri": "/api/project/$currentProject$/term.json",
+      "uri-print-attribute": "name",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": false,
+      "name": "Binary classification",
+      "description": "Whether (true) or not (false) to treat the problem as a binary classification or not. If true cytomine_positive_terms should contain the list of terms considered as positive. Otherwise, there will be as many classes as terms.",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "cytomine_binary",
+      "type": "Boolean",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": "",
+      "name": "Cytomine positive terms",
+      "description": "Contains the ids of the terms that represent the positive class.",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "cytomine_positive_terms",
+      "type": "ListDomain",
+      "uri": "/api/project/$currentProject$/term.json",
+      "uri-print-attribute": "name",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 0,
+      "name": "Cytomine reviewed",
+      "description": "(Annotations filtering) \u00270\u0027 for using regular annotations. \u00271\u0027 for also including reviewed annotations. \u00272\u0027 for using only reviewed annotations.",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "cytomine_reviewed",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 0,
+      "name": "Cytomine zoom level",
+      "description": "The zoom level for reading the slides",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "cytomine_zoom_level",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 24,
+      "name": "Pyxit Target Width",
+      "description": "pyxit_target_width",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "pyxit_target_width",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 24,
+      "name": "Pyxit Target Height",
+      "description": "pyxit_target_height",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "pyxit_target_height",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 1,
+      "name": "Number of jobs",
+      "description": "Number of jobs for training",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "n_jobs",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": "false",
+      "name": "Pyxit Transpose",
+      "description": "pyxit_transpose",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "pyxit_transpose",
+      "type": "Boolean",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 100,
+      "name": "Pyxit N Subwindows",
+      "description": "pyxit_n_subwindows",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "pyxit_n_subwindows",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 1,
+      "name": "Pyxit Interpolation",
+      "description": "pyxit_interpolation",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "pyxit_interpolation",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": "false",
+      "name": "Pyxit Fixed Size",
+      "description": "pyxit_fixed_size",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "pyxit_fixed_size",
+      "type": "Boolean",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 2,
+      "name": "Pyxit Colorspace",
+      "description": "pyxit_colorspace",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "pyxit_colorspace",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+        {
+      "default-value": 0.1,
+      "name": "Pyxit Min Size",
+      "description": "pyxit_min_size",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "pyxit_min_size",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 1,
+      "name": "Pyxit Max Size",
+      "description": "pyxit_max_size",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "pyxit_max_size",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 10,
+      "name": "Forest N Estimators",
+      "description": "forest_n_estimators",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "forest_n_estimators",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 2,
+      "name": "Forest Min Samples Split",
+      "description": "forest_min_samples_split",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "forest_min_samples_split",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 28,
+      "name": "Forest Max Features",
+      "description": "forest_max_features",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "forest_max_features",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 1,
+      "name": "Svm C",
+      "description": "svm_c",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "svm_c",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": 42,
+      "name": "Random seed",
+      "description": "The random generator integer seed",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "seed",
+      "type": "Number",
+      "command-line-flag": "--@id"
+    },
+    {
+      "default-value": false,
+      "name": "Svm",
+      "description": "svm",
+      "set-by-server": false,
+      "value-key": "@ID",
+      "optional": true,
+      "id": "svm",
+      "type": "Boolean",
+      "command-line-flag": "--@id"
+    }
+  ],
+  "name": "Segment-ML-MultiOutputET-Train",
+  "description": "Image segmentation algorithm based on extremely randomized trees",
+  "schema-version": "cytomine-0.1",
+  "container-image": {
+    "image": "cytomine-uliege/s_segment-ml-multioutputet-train",
+    "type": "singularity"
+  }
+}
