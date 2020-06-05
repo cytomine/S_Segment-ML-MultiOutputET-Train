@@ -31,27 +31,28 @@ def main(argv):
 
         # transform classes
         cj.job.update(progress=50, statusComment="Transform classes...")
-        classes = parse_domain_list(cj.parameters.cytomine_id_terms)
-        positive_classes = parse_domain_list(cj.parameters.cytomine_positive_terms)
-        classes = np.array(classes) if len(classes) > 0 else np.unique(y)
-        n_classes = classes.shape[0]
+        foreground_classes = parse_domain_list(cj.parameters.cytomine_id_terms)
+        foreground_classes = np.array(foreground_classes) if len(foreground_classes) > 0 else np.unique(y)
+        n_classes = foreground_classes.shape[0] + 1
 
         # filter unwanted terms
         cj.logger.info("Size before filtering:")
         cj.logger.info(" - x: {}".format(x.shape))
         cj.logger.info(" - y: {}".format(y.shape))
-        keep = np.in1d(y, classes)
+        keep = np.in1d(y, foreground_classes)
         x, y = x[keep], y[keep]
         cj.logger.info("Size after filtering:")
         cj.logger.info(" - x: {}".format(x.shape))
         cj.logger.info(" - y: {}".format(y.shape))
 
         if cj.parameters.cytomine_binary:
+            # 0 (background) vs 1 (classes from cytomine_id_terms)
             cj.logger.info("Will be training on 2 classes ({} classes before binarization).".format(n_classes))
-            y = np.in1d(y, positive_classes).astype(np.int)
+            y = np.ones(y.shape)
         else:
+            # 0 (background vs 1 vs 2 vs ... n (n classes from cytomine_id_terms)
             cj.logger.info("Will be training on {} classes.".format(n_classes))
-            y = np.searchsorted(classes, y)
+            y = np.searchsorted(foreground_classes, y) + 1  # +1 to prevent 0 to be used as a foreground class
 
         # build model
         cj.job.update(progress=55, statusComment="Build model...")
@@ -91,9 +92,8 @@ def main(argv):
             domainClassName="be.cytomine.processing.Job"
         ).upload()
 
-        Property(cj.job, key="classes", value=stringify(classes)).save()
+        Property(cj.job, key="foreground_classes", value=stringify(foreground_classes)).save()
         Property(cj.job, key="binary", value=cj.parameters.cytomine_binary).save()
-        Property(cj.job, key="positive_classes", value=stringify(positive_classes)).save()
 
         cj.job.update(status=Job.TERMINATED, status_comment="Finish", progress=100)
 

@@ -1,5 +1,5 @@
 {
-  "command-line": "python run.py CYTOMINE_HOST CYTOMINE_PUBLIC_KEY CYTOMINE_PRIVATE_KEY CYTOMINE_ID_PROJECT CYTOMINE_ID_SOFTWARE CYTOMINE_ID_USERS CYTOMINE_ID_IMAGES CYTOMINE_ID_TERMS CYTOMINE_POSITIVE_TERMS CYTOMINE_REVIEWED CYTOMINE_ZOOM_LEVEL CYTOMINE_BINARY PYXIT_TARGET_WIDTH PYXIT_TARGET_HEIGHT N_JOBS PYXIT_TRANSPOSE PYXIT_N_SUBWINDOWS PYXIT_INTERPOLATION PYXIT_FIXED_SIZE PYXIT_COLORSPACE PYXIT_MIN_SIZE PYXIT_MAX_SIZE FOREST_N_ESTIMATORS FOREST_MIN_SAMPLES_SPLIT FOREST_MAX_FEATURES SVM_C SEED SVM",
+  "command-line": "python run.py CYTOMINE_HOST CYTOMINE_PUBLIC_KEY CYTOMINE_PRIVATE_KEY CYTOMINE_ID_PROJECT CYTOMINE_ID_SOFTWARE CYTOMINE_ID_USERS CYTOMINE_ID_IMAGES CYTOMINE_ID_TERMS CYTOMINE_REVIEWED CYTOMINE_ZOOM_LEVEL CYTOMINE_BINARY PYXIT_TARGET_WIDTH PYXIT_TARGET_HEIGHT N_JOBS PYXIT_TRANSPOSE PYXIT_N_SUBWINDOWS PYXIT_INTERPOLATION PYXIT_FIXED_SIZE PYXIT_COLORSPACE PYXIT_MIN_SIZE PYXIT_MAX_SIZE FOREST_N_ESTIMATORS FOREST_MIN_SAMPLES_SPLIT FOREST_MAX_FEATURES SVM_C SEED SVM",
   "inputs": [
     {
       "name": "Cytomine host",
@@ -93,25 +93,12 @@
     {
       "default-value": false,
       "name": "Binary classification",
-      "description": "Whether (true) or not (false) to treat the problem as a binary classification or not. If true cytomine_positive_terms should contain the list of terms considered as positive. Otherwise, there will be as many classes as terms.",
+      "description": "Whether or not to treat the problem as a binary classification or not. Annotations with terms given in cytomine_id_terms are considered foreground, all others are considered background.",
       "set-by-server": false,
       "value-key": "@ID",
       "optional": true,
       "id": "cytomine_binary",
       "type": "Boolean",
-      "command-line-flag": "--@id"
-    },
-    {
-      "default-value": "",
-      "name": "Cytomine positive terms",
-      "description": "Contains the ids of the terms that represent the positive class.",
-      "set-by-server": false,
-      "value-key": "@ID",
-      "optional": true,
-      "id": "cytomine_positive_terms",
-      "type": "ListDomain",
-      "uri": "/api/project/$currentProject$/term.json",
-      "uri-print-attribute": "name",
       "command-line-flag": "--@id"
     },
     {
