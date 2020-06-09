@@ -157,7 +157,7 @@
       "command-line-flag": "--@id"
     },
     {
-      "default-value": "false",
+      "default-value": false,
       "name": "Pyxit Transpose",
       "description": "pyxit_transpose",
       "set-by-server": false,
@@ -190,7 +190,7 @@
       "command-line-flag": "--@id"
     },
     {
-      "default-value": "false",
+      "default-value": true,
       "name": "Pyxit Fixed Size",
       "description": "pyxit_fixed_size",
       "set-by-server": false,
