@@ -19,7 +19,7 @@ def main(argv):
         # hardcode parameter for setup classify to fetch alphamask instead of plain crop.
         cj.parameters.cytomine_download_alpha = True
         cj.parameters.cytomine_id_projects = "{}".format(cj.project.id)
-        print(cj.parameters)
+        cj.job.update(progress=10, statuscomment="Downloading crops.")
         base_path, downloaded = setup_classify(
             args=cj.parameters, logger=cj.job_logger(1, 40),
             dest_pattern=os.path.join("{term}", "{image}_{id}.png"),
