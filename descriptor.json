@@ -91,14 +91,16 @@
       "command-line-flag": "--@id"
     },
     {
-      "default-value": false,
-      "name": "Binary classification",
-      "description": "Whether or not to treat the problem as a binary classification or not. Annotations with terms given in cytomine_id_terms are considered foreground, all others are considered background.",
+      "default-value": "",
+      "name": "Cytomine positive terms ids",
+      "description": "When provided, binary segmentation is enabled. A subset of the terms of the cytomine_id_terms that should be considered as foreground during the segmentation.",
       "set-by-server": false,
       "value-key": "@ID",
       "optional": true,
-      "id": "cytomine_binary",
-      "type": "Boolean",
+      "id": "cytomine_id_positive_terms",
+      "type": "ListDomain",
+      "uri": "/api/project/$currentProject$/term.json",
+      "uri-print-attribute": "name",
       "command-line-flag": "--@id"
     },
     {

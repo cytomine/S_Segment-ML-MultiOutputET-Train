@@ -2,7 +2,6 @@ import os
 
 import joblib
 import numpy as np
-from pathlib import Path
 
 from cytomine.models import AttachedFile, Property, Job
 from pyxit import build_models
@@ -14,48 +13,62 @@ from cytomine.utilities.software import parse_domain_list, setup_classify, strin
 def main(argv):
     with CytomineJob.from_cli(argv) as cj:
         # use only images from the current project
-        cj.job.update(progress=1, statuscomment="Preparing execution (creating folders,...).")
+        cj.job.update(progress=1, statusComment="Preparing execution (creating folders,...).")
 
         # hardcode parameter for setup classify to fetch alphamask instead of plain crop.
         cj.parameters.cytomine_download_alpha = True
         cj.parameters.cytomine_id_projects = "{}".format(cj.project.id)
-        cj.job.update(progress=10, statuscomment="Downloading crops.")
+        cj.job.update(progress=2, statusComment="Downloading crops.")
+        cj.parameters.cytomine_zoom_level = - cj.parameters.cytomine_zoom_level
         base_path, downloaded = setup_classify(
-            args=cj.parameters, logger=cj.job_logger(1, 40),
+            args=cj.parameters, logger=cj.job_logger(2, 25),
             dest_pattern=os.path.join("{term}", "{image}_{id}.png"),
-            root_path=Path.home(), set_folder="train", showTerm=True
+            root_path=str("tmp"), set_folder="train", showTerm=True
         )
 
         x = np.array([f for annotation in downloaded for f in annotation.filenames])
         y = np.array([int(os.path.basename(os.path.dirname(filepath))) for filepath in x])
 
         # transform classes
-        cj.job.update(progress=50, statusComment="Transform classes...")
-        foreground_classes = parse_domain_list(cj.parameters.cytomine_id_terms)
-        foreground_classes = np.array(foreground_classes) if len(foreground_classes) > 0 else np.unique(y)
-        n_classes = foreground_classes.shape[0] + 1
+        cj.job.update(progress=25, statusComment="Transform classes...")
+        positive_terms = parse_domain_list(cj.parameters.cytomine_id_positive_terms)
+        selected_terms = parse_domain_list(cj.parameters.cytomine_id_terms)
+        is_binary = len(selected_terms) > 0 and len(positive_terms) > 0
+        if len(selected_terms) == 0:
+            foreground_terms = np.unique(y)
+            classes = [0] + list(foreground_terms)
+        elif len(positive_terms) == 0:
+            foreground_terms = np.array(selected_terms)
+            classes = [0] + selected_terms
+        else:  # binary
+            foreground_terms = np.array(positive_terms)
+            classes = [0, 1]
+        n_classes = len(classes)
 
         # filter unwanted terms
         cj.logger.info("Size before filtering:")
         cj.logger.info(" - x: {}".format(x.shape))
         cj.logger.info(" - y: {}".format(y.shape))
-        keep = np.in1d(y, foreground_classes)
+        keep = np.in1d(y, classes)
         x, y = x[keep], y[keep]
         cj.logger.info("Size after filtering:")
         cj.logger.info(" - x: {}".format(x.shape))
         cj.logger.info(" - y: {}".format(y.shape))
 
-        if cj.parameters.cytomine_binary:
-            # 0 (background) vs 1 (classes from cytomine_id_terms)
-            cj.logger.info("Will be training on 2 classes ({} classes before binarization).".format(n_classes))
-            y = np.ones(y.shape)
+        if is_binary:
+            # 0 (background) vs 1 (classes in foreground )
+            cj.logger.info("Binary segmentation:")
+            cj.logger.info("> class '0': background & terms {}".format(set(selected_terms).difference(positive_terms)))
+            cj.logger.info("> class '1': {}".format(set(selected_terms)))
+            y = np.in1d(y, foreground_terms).astype(np.int)
         else:
             # 0 (background vs 1 vs 2 vs ... n (n classes from cytomine_id_terms)
-            cj.logger.info("Will be training on {} classes.".format(n_classes))
-            y = np.searchsorted(foreground_classes, y) + 1  # +1 to prevent 0 to be used as a foreground class
+            cj.logger.info("Multi-class segmentation:")
+            cj.logger.info("> background class '0'")
+            cj.logger.info("> term classes: {}".format(set(foreground_terms)))
 
         # build model
-        cj.job.update(progress=55, statusComment="Build model...")
+        cj.job.update(progress=27, statusComment="Build model...")
         et, pyxit = build_models(
             n_subwindows=cj.parameters.pyxit_n_subwindows,
             min_size=cj.parameters.pyxit_min_size,
@@ -79,8 +92,19 @@ def main(argv):
         # to extract the classes form the mask
         pyxit.get_output = _get_output_from_mask
 
+        # extract subwindows manually to avoid class problem
+        cj.job.update(progress=30, statusComment="Extract subwindwos...")
+        _x, _y = pyxit.extract_subwindows(x, y)
+
+        cj.logger.info("Size of actual training data:")
+        cj.logger.info(" - x: {}".format(_x.shape))
+        cj.logger.info(" - y: {}".format(_y.shape))
+
         cj.job.update(progress=60, statusComment="Train model...")
-        pyxit.fit(x, y)
+        # "re-implement" pyxit.fit to avoid incorrect class handling
+        pyxit.classes = classes
+        pyxit.n_classes = n_classes
+        pyxit.base_estimator.fit(_x, _y)
 
         cj.job.update(progress=90, statusComment="Save model....")
         model_filename = joblib.dump(pyxit, os.path.join(base_path, "model.joblib"), compress=3)[0]
@@ -92,7 +116,8 @@ def main(argv):
             domainClassName="be.cytomine.processing.Job"
         ).upload()
 
-        Property(cj.job, key="foreground_classes", value=stringify(foreground_classes)).save()
+        Property(cj.job, key="foreground_terms", value=stringify(foreground_terms)).save()
+        Property(cj.job, key="classes", value=stringify(classes)).save()
         Property(cj.job, key="binary", value=cj.parameters.cytomine_binary).save()
 
         cj.job.update(status=Job.TERMINATED, status_comment="Finish", progress=100)
