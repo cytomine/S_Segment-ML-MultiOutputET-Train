@@ -43,6 +43,11 @@ def main(argv):
         else:  # binary
             foreground_terms = np.array(positive_terms)
             classes = [0, 1]
+            # cast to binary
+            fg_idx = np.in1d(y, foreground_terms)
+            bg_idx = np.in1d(y, set(selected_terms).difference(foreground_terms))
+            y[fg_idx], y[bg_idx] = 1, 0
+
         n_classes = len(classes)
 
         # filter unwanted terms
@@ -55,12 +60,14 @@ def main(argv):
         cj.logger.info(" - x: {}".format(x.shape))
         cj.logger.info(" - y: {}".format(y.shape))
 
+        if x.shape[0] == 0:
+            raise ValueError("No training data")
+
         if is_binary:
             # 0 (background) vs 1 (classes in foreground )
             cj.logger.info("Binary segmentation:")
             cj.logger.info("> class '0': background & terms {}".format(set(selected_terms).difference(positive_terms)))
-            cj.logger.info("> class '1': {}".format(set(selected_terms)))
-            y = np.in1d(y, foreground_terms).astype(np.int)
+            cj.logger.info("> class '1': {}".format(set(foreground_terms)))
         else:
             # 0 (background vs 1 vs 2 vs ... n (n classes from cytomine_id_terms)
             cj.logger.info("Multi-class segmentation:")
@@ -116,8 +123,6 @@ def main(argv):
             domainClassName="be.cytomine.processing.Job"
         ).upload()
 
-        Property(cj.job, key="foreground_terms", value=stringify(foreground_terms)).save()
-        Property(cj.job, key="classes", value=stringify(classes)).save()
         Property(cj.job, key="binary", value=cj.parameters.cytomine_binary).save()
 
         cj.job.update(status=Job.TERMINATED, status_comment="Finish", progress=100)
