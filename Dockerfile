@@ -10,7 +10,7 @@ RUN git clone https://github.com/cytomine-uliege/Cytomine-python-client.git && \
 
 # --------------------------------------------------------------------------------------------
 # Instal Pyxit
-RUN pip install pyxit==1.1.4
+RUN pip install pyxit==1.1.5
 
 # --------------------------------------------------------------------------------------------
 # Instal Pyxit
