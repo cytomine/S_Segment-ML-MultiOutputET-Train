@@ -269,17 +269,6 @@
       "command-line-flag": "--@id"
     },
     {
-      "default-value": 1,
-      "name": "Svm C",
-      "description": "svm_c",
-      "set-by-server": false,
-      "value-key": "@ID",
-      "optional": true,
-      "id": "svm_c",
-      "type": "Number",
-      "command-line-flag": "--@id"
-    },
-    {
       "default-value": 42,
       "name": "Random seed",
       "description": "The random generator integer seed",
@@ -288,17 +277,6 @@
       "optional": true,
       "id": "seed",
       "type": "Number",
-      "command-line-flag": "--@id"
-    },
-    {
-      "default-value": false,
-      "name": "Svm",
-      "description": "svm",
-      "set-by-server": false,
-      "value-key": "@ID",
-      "optional": true,
-      "id": "svm",
-      "type": "Boolean",
       "command-line-flag": "--@id"
     }
   ],
