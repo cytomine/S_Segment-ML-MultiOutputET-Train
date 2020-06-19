@@ -103,8 +103,9 @@ def main(argv):
         _x, _y = pyxit.extract_subwindows(x, y)
 
         cj.logger.info("Size of actual training data:")
-        cj.logger.info(" - x: {}".format(_x.shape))
-        cj.logger.info(" - y: {}".format(_y.shape))
+        cj.logger.info(" - x   : {}".format(_x.shape))
+        cj.logger.info(" - y   : {}".format(_y.shape))
+        cj.logger.info(" - dist: {}".format(", ".join(["{}: {}".format(v, c) for v, c in np.unique(_y, return_counts=True)])))
 
         cj.job.update(progress=60, statusComment="Train model...")
         # "re-implement" pyxit.fit to avoid incorrect class handling
