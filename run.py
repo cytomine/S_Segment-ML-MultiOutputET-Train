@@ -44,9 +44,10 @@ def main(argv):
             foreground_terms = np.array(positive_terms)
             classes = [0, 1]
             # cast to binary
-            fg_idx = np.in1d(y, foreground_terms)
-            bg_idx = np.in1d(y, set(selected_terms).difference(foreground_terms))
-            y[fg_idx], y[bg_idx] = 1, 0
+            fg_idx = np.in1d(y, list(foreground_terms))
+            bg_idx = np.in1d(y, list(set(selected_terms).difference(foreground_terms)))
+            y[fg_idx] = 1
+            y[bg_idx] = 0
 
         n_classes = len(classes)
 
@@ -87,8 +88,6 @@ def main(argv):
             colorspace=cj.parameters.pyxit_colorspace,
             fixed_size=cj.parameters.pyxit_fixed_size,
             verbose=int(cj.logger.level == 10),
-            create_svm=cj.parameters.svm,
-            C=cj.parameters.svm_c,
             random_state=cj.parameters.seed,
             n_estimators=cj.parameters.forest_n_estimators,
             min_samples_split=cj.parameters.forest_min_samples_split,
@@ -109,8 +108,8 @@ def main(argv):
 
         cj.job.update(progress=60, statusComment="Train model...")
         # "re-implement" pyxit.fit to avoid incorrect class handling
-        pyxit.classes = classes
-        pyxit.n_classes = n_classes
+        pyxit.classes_ = np.array(classes)
+        pyxit.n_classes_ = n_classes
         pyxit.base_estimator.fit(_x, _y)
 
         cj.job.update(progress=90, statusComment="Save model....")
@@ -123,7 +122,8 @@ def main(argv):
             domainClassName="be.cytomine.processing.Job"
         ).upload()
 
-        Property(cj.job, key="binary", value=cj.parameters.cytomine_binary).save()
+        Property(cj.job, key="classes", value=stringify(classes)).save()
+        Property(cj.job, key="binary", value=is_binary).save()
 
         cj.job.update(status=Job.TERMINATED, status_comment="Finish", progress=100)
 
