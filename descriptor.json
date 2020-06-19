@@ -159,7 +159,7 @@
       "command-line-flag": "--@id"
     },
     {
-      "default-value": false,
+      "default-value": true,
       "name": "Pyxit Transpose",
       "description": "pyxit_transpose",
       "set-by-server": false,
