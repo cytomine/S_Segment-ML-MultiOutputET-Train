@@ -284,7 +284,7 @@
   "description": "Image segmentation algorithm based on extremely randomized trees",
   "schema-version": "cytomine-0.1",
   "container-image": {
-    "image": "cytomineuliege/s_segment-ml-multioutputet-train",
+    "image": "cytomine/s_segment-ml-multioutputet-train",
     "type": "singularity"
   }
 }
