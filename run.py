@@ -35,7 +35,7 @@ def main(argv):
         is_binary = len(selected_terms) > 0 and len(positive_terms) > 0
         foreground_terms = np.unique(y) if len(selected_terms) == 0 else np.array(selected_terms)
         if len(positive_terms) == 0:
-            classes = np.hstack(np.zeros((1,)), foreground_terms)
+            classes = np.hstack((np.zeros((1,), dtype=int), foreground_terms))
         else:  # binary
             foreground_terms = np.array(positive_terms)
             classes = np.array([0, 1])
