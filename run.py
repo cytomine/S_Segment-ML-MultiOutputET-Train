@@ -19,7 +19,6 @@ def main(argv):
         cj.parameters.cytomine_download_alpha = True
         cj.parameters.cytomine_id_projects = "{}".format(cj.project.id)
         cj.job.update(progress=2, statusComment="Downloading crops.")
-        cj.parameters.cytomine_zoom_level = - cj.parameters.cytomine_zoom_level
         base_path, downloaded = setup_classify(
             args=cj.parameters, logger=cj.job_logger(2, 25),
             dest_pattern=os.path.join("{term}", "{image}_{id}.png"),
