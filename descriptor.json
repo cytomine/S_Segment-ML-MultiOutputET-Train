@@ -117,7 +117,7 @@
     {
       "default-value": 0,
       "name": "Cytomine zoom level",
-      "description": "The zoom level for reading the slides",
+      "description": "The zoom level for reading the slides (0 for max zoom, 1 or more for smaller magnification)",
       "set-by-server": false,
       "value-key": "@ID",
       "optional": true,

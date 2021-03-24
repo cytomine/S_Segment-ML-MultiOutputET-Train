@@ -19,7 +19,6 @@ def main(argv):
         cj.parameters.cytomine_download_alpha = True
         cj.parameters.cytomine_id_projects = "{}".format(cj.project.id)
         cj.job.update(progress=2, statusComment="Downloading crops.")
-        cj.parameters.cytomine_zoom_level = - cj.parameters.cytomine_zoom_level
         base_path, downloaded = setup_classify(
             args=cj.parameters, logger=cj.job_logger(2, 25),
             dest_pattern=os.path.join("{term}", "{image}_{id}.png"),
@@ -34,22 +33,19 @@ def main(argv):
         positive_terms = parse_domain_list(cj.parameters.cytomine_id_positive_terms)
         selected_terms = parse_domain_list(cj.parameters.cytomine_id_terms)
         is_binary = len(selected_terms) > 0 and len(positive_terms) > 0
-        if len(selected_terms) == 0:
-            foreground_terms = np.unique(y)
-            classes = [0] + list(foreground_terms)
-        elif len(positive_terms) == 0:
-            foreground_terms = np.array(selected_terms)
-            classes = [0] + selected_terms
+        foreground_terms = np.unique(y) if len(selected_terms) == 0 else np.array(selected_terms)
+        if len(positive_terms) == 0:
+            classes = np.hstack(np.zeros((1,)), foreground_terms)
         else:  # binary
             foreground_terms = np.array(positive_terms)
-            classes = [0, 1]
+            classes = np.array([0, 1])
             # cast to binary
             fg_idx = np.in1d(y, list(foreground_terms))
             bg_idx = np.in1d(y, list(set(selected_terms).difference(foreground_terms)))
             y[fg_idx] = 1
             y[bg_idx] = 0
 
-        n_classes = len(classes)
+        n_classes = classes.shape[0]
 
         # filter unwanted terms
         cj.logger.info("Size before filtering:")
@@ -102,6 +98,13 @@ def main(argv):
         cj.job.update(progress=30, statusComment="Extract subwindwos...")
         _x, _y = pyxit.extract_subwindows(x, y)
 
+        actual_classes = np.unique(_y)
+        if actual_classes.shape[0] != classes.shape[0]:
+            raise ValueError("Some classes are missing from the dataset: actual='{}', expected='{}'".format(
+                ",".join(map(str, actual_classes)),
+                ",".join(map(str, classes))
+            ))
+
         cj.logger.info("Size of actual training data:")
         cj.logger.info(" - x   : {}".format(_x.shape))
         cj.logger.info(" - y   : {}".format(_y.shape))
@@ -109,7 +112,7 @@ def main(argv):
 
         cj.job.update(progress=60, statusComment="Train model...")
         # "re-implement" pyxit.fit to avoid incorrect class handling
-        pyxit.classes_ = np.array(classes)
+        pyxit.classes_ = classes
         pyxit.n_classes_ = n_classes
         pyxit.base_estimator.fit(_x, _y)
 
