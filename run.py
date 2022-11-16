@@ -36,9 +36,13 @@ def main(argv):
         if is_binary: 
             classes = np.array([0, 1])
         else:
-            classes = np.array([0] + sorted(class_map.values()))
+            sorted_terms = [t for t, _ in sorted(class_map.items(), key=lambda cm_t: cm_t[1])]
+            classes = np.array([0] + sorted_terms)
         n_classes = classes.shape[0]
         cj.job.update(progress=25, statusComment=f"Dataset built, found {len(rois)} ROIs, {'binary' if is_binary else 'multi-class'} segmentation ({len(classes)} classes)...")
+        if not is_binary:
+            class_map_str = ", ".join(f"{c} -> {t}" for t, c in class_map.items())
+            cj.logger.info(f"Class map: {class_map_str}")
 
         # build model
         _, pyxit = build_models(
