@@ -1,9 +1,9 @@
 {
-  "name": "Segment-ML-MultiOutputET-ROI-Train",
+  "name": "Segment-ML-MultiOutputET-Train-ROI",
   "description": "Image segmentation (training) algorithm based on extremely randomized trees. Learn from annotated regions of interest (ROIs).",
   "schema-version": "cytomine-0.1",
   "container-image": {
-    "image": "cytomine/s_segment-ml-multioutputet-roi-train",
+    "image": "cytomine/s_segment-ml-multioutputet-train-roi",
     "type": "singularity"
   },
   "command-line": "python run.py CYTOMINE_HOST CYTOMINE_PUBLIC_KEY CYTOMINE_PRIVATE_KEY CYTOMINE_ID_PROJECT CYTOMINE_ID_SOFTWARE CYTOMINE_ID_USERS CYTOMINE_ID_IMAGES CYTOMINE_ID_TERMS CYTOMINE_ID_POSITIVE_TERMS CYTOMINE_ID_ROI_TERM CYTOMINE_ZOOM_LEVEL PYXIT_TARGET_SIZE N_JOBS PYXIT_N_TOTAL_SUBWINDOWS PYXIT_COLORSPACE FOREST_N_ESTIMATORS FOREST_MIN_SAMPLES_SPLIT FOREST_MAX_FEATURES RANDOM_SEED",
