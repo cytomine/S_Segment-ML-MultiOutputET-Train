@@ -8,6 +8,7 @@ RUN pip3 install -r /tmp/requirements.txt
 
 # --------------------------------------------------------------------------------------------
 ADD descriptor.json /app/descriptor.json
+ADD dataset.py /app/dataset.py
 ADD run.py /app/run.py
 
 ENTRYPOINT ["python", "/app/run.py"]
