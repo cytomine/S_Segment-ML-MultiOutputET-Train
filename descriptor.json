@@ -197,7 +197,7 @@
       "command-line-flag": "--@id"
     },
     {
-      "default-value": 28,
+      "default-value": 42,
       "name": "Maximum number of features (extra-trees)",
       "description": "Maximum number of features to consider for determining the split in the random forest.",
       "set-by-server": false,
