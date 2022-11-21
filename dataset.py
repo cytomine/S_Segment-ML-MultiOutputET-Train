@@ -217,7 +217,10 @@ def download_segmentation(
       if len(roi_polygons) == 0:
         continue
       term_mask = features.geometry_mask(
-        geometries=[change_referential(p, zoom_level=zoom_level, offset=(minx, miny)) for p in roi_polygons],
+        geometries=[  # minx & maxx are post-zoom coordinates 
+          change_referential(change_referential(p, zoom_level=zoom_level), offset=(minx, miny)) 
+          for p in roi_polygons
+        ],
         out_shape=class_mask.shape,
         transform=roi_affine,
         invert=True)
